@@ -1,0 +1,14 @@
+node_modules
+pnpm-lock.yaml
+apps/api
+apps/web/src/contrato.d.ts
+apps/web/dist
+apps/web/coverage
+contracts/openapi.yaml
+.artifacts
+.secrets
+.tools
+.env
+.env.*
+apps/web/test-results
+apps/web/playwright-report

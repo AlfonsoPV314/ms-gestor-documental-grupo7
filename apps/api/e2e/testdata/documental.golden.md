@@ -1,0 +1,22 @@
+# Flujo documental
+
+- sin sesión: 401
+- token vencido: 401
+- algoritmo ajeno: 401
+- sin permiso: 403
+- lector no carga: 403
+- archivo vacío: 422
+- nombre inseguro: 422
+- archivo grande: 413
+- carga original: 201
+- ajeno: 404
+- ajeno/contenido: 404
+- ajeno/verificacion: 404
+- descarga lector: 200
+- verificación original: 200
+- contenido alterado: detectado
+- 6 cargas concurrentes: documentos y auditorías consistentes
+- fallo auditoría: 503
+- fallo auditoría: rollback completo
+- origen ajeno: 403
+- reinicio: firma y documento conservados

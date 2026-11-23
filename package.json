@@ -1,0 +1,31 @@
+{
+  "name": "ms-gestor-documental",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": "22.22.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui dev",
+    "build": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui build",
+    "typecheck": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui typecheck",
+    "test": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui test",
+    "test:api": "node scripts/go.mjs test ./...",
+    "test:e2e:api": "node scripts/e2e.mjs",
+    "test:mutacion": "node scripts/mutacion.mjs",
+    "test:e2e:web": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui test:e2e",
+    "codegen": "node scripts/codegen.mjs",
+    "generate": "node scripts/go.mjs run github.com/sqlc-dev/sqlc/cmd/sqlc@v1.29.0 generate",
+    "lint": "oxlint --deny-warnings apps/web/src && node scripts/arquitectura.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:api && pnpm build",
+    "sonar": "node scripts/sonar.mjs"
+  },
+  "devDependencies": {
+    "oxlint": "1.75.0",
+    "prettier": "3.9.6",
+    "lefthook": "2.1.10"
+  }
+}

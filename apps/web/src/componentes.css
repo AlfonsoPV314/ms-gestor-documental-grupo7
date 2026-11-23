@@ -1,0 +1,140 @@
+.documental-ui {
+  box-sizing: border-box;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #203a35;
+  background: #fff;
+  border: 1px solid #dde3d8;
+  border-radius: 16px;
+  padding: 28px;
+}
+.documental-ui * {
+  box-sizing: border-box;
+}
+.documental-ui h2 {
+  font-size: 21px;
+  margin: 10px 0 12px;
+}
+.documental-ui h3 {
+  font-size: 16px;
+}
+.documental-ui p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #748274;
+}
+.documental-ui button {
+  font: inherit;
+  font-size: 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 12px 18px;
+  color: #fff;
+  background: #294f43;
+  cursor: pointer;
+}
+.documental-ui button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.documental-ui .secundario {
+  background: #fff;
+  color: #42604d;
+  border-color: #dce3d5;
+}
+.documental-ui .etiqueta {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #638052;
+}
+.documental-ui .zona-archivo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 1px dashed #bdcbb5;
+  background: #f7f9f3;
+  border-radius: 12px;
+  padding: 26px 12px;
+  margin: 24px 0 16px;
+}
+.documental-ui input {
+  max-width: 100%;
+  font-size: 11px;
+}
+.documental-ui .cabecera-seccion,
+.documental-ui .acciones,
+.documental-ui .paginacion {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.documental-ui .lista-documentos {
+  list-style: none;
+  padding: 0;
+}
+.documental-ui .fila-documento {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  width: 100%;
+  background: #fff;
+  color: inherit;
+  border-bottom: 1px solid #eef1e9;
+  border-radius: 0;
+  padding: 16px 0;
+}
+.documental-ui .fila-documento > span:nth-child(2) {
+  display: grid;
+  gap: 5px;
+}
+.documental-ui small {
+  font-size: 11px;
+  color: #748274;
+}
+.documental-ui .tipo-archivo {
+  padding: 12px;
+  background: #eef2e7;
+  border-radius: 8px;
+  font-size: 10px;
+}
+.documental-ui .flecha {
+  margin-left: auto;
+}
+.documental-ui dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+.documental-ui dt {
+  font-size: 10px;
+  margin: 14px 0 5px;
+}
+.documental-ui .detalle {
+  margin-top: 24px;
+  padding-top: 12px;
+  border-top: 1px solid #e3e9db;
+}
+.documental-ui .vacio {
+  text-align: center;
+  padding: 32px 0;
+}
+.documental-ui .error {
+  color: #a53730;
+  background: #fff0ed;
+  padding: 12px;
+  border-radius: 8px;
+}
+.documental-ui .exito {
+  color: #3e6a3e;
+  background: #edf5e7;
+  padding: 12px;
+  border-radius: 8px;
+}
+.documental-ui button:focus-visible,
+.documental-ui input:focus-visible {
+  outline: 3px solid #a9be77;
+  outline-offset: 3px;
+}

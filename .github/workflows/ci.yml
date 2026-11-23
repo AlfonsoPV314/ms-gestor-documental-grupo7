@@ -1,0 +1,141 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+env:
+  GOTOOLCHAIN: go1.26.11
+  TRIVY_VERSION: v0.76.1
+  GOVULNCHECK_VERSION: v1.9.0
+  OASDIFF_VERSION: v1.35.0
+  DOCKLE_VERSION: v0.4.15
+jobs:
+  calidad:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17.11@sha256:ff87138949ad9a46f32ff23bd6852b52ce024a13dffe9b4087be98292cdd3b4f
+        env:
+          POSTGRES_PASSWORD: prueba-ci-aislada
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 3s --health-retries 30
+    env:
+      TEST_DATABASE_URL: postgres://postgres:prueba-ci-aislada@localhost:5432/postgres?sslmode=disable
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version-file: .nvmrc, cache: pnpm }
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with: { go-version-file: apps/api/go.mod }
+      - run: pnpm install --frozen-lockfile
+      - run: cd apps/api && go mod verify && test -z "$(gofmt -l .)" && go vet ./...
+      - run: pnpm verify
+      - run: pnpm generate && pnpm codegen && git diff --exit-code
+      - name: Compatibilidad del contrato
+        shell: bash
+        run: |
+          if git cat-file -e origin/main:contracts/openapi.yaml 2>/dev/null; then
+            git show origin/main:contracts/openapi.yaml > /tmp/base.yaml
+            go run github.com/oasdiff/oasdiff@${OASDIFF_VERSION} breaking /tmp/base.yaml contracts/openapi.yaml --fail-on ERR
+          else
+            echo 'Primer contrato: se establece la línea base; no hay contrato previo que comparar.'
+          fi
+          if git rev-parse hito-1 >/dev/null 2>&1; then
+            git show hito-1:contracts/openapi.yaml > /tmp/hito-1.yaml
+            go run github.com/oasdiff/oasdiff@${OASDIFF_VERSION} breaking /tmp/hito-1.yaml contracts/openapi.yaml --fail-on ERR
+          fi
+      - run: pnpm test:e2e:api
+      - run: pnpm test:mutacion
+      - name: Prueba de navegador sobre Compose real
+        run: |
+          mkdir -p .secrets
+          export SIGNING_KEY_FILE="$PWD/.secrets/firma.key"
+          node scripts/go.mjs run ./cmd/claves
+          export POSTGRES_PASSWORD="$(openssl rand -hex 24)"
+          docker compose up -d --build --wait
+          pnpm --filter @pingeso-civil/ms-gestor-documental-ui exec playwright install --with-deps chromium
+          pnpm test:e2e:web
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        if: always()
+        with:
+          name: evidencia-pruebas
+          path: |
+            .artifacts/mutacion.log
+            apps/api/coverage.out
+            apps/web/coverage/lcov.info
+            apps/web/playwright-report
+            apps/web/test-results
+      - name: SonarQube y Quality Gate obligatorios
+        uses: SonarSource/sonarqube-scan-action@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304 # v8.4.0
+        with: { args: '-Dsonar.qualitygate.wait=true' }
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  seguridad:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version-file: .nvmrc, cache: pnpm }
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with: { go-version-file: apps/api/go.mod }
+      - run: pnpm install --frozen-lockfile && pnpm audit --audit-level high
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env: { GITLEAKS_VERSION: 8.30.1 }
+      - run: cd apps/api && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
+      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+        with: { recursive: true, failure-threshold: error }
+      - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          scan-type: fs
+          scanners: vuln,misconfig,secret
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          skip-dirs: .secrets,.artifacts,.tools,node_modules
+  imagen:
+    needs: [calidad, seguridad]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: docker build -f apps/api/Dockerfile --build-arg VERSION=${GITHUB_SHA::7} -t api:ci .
+      - run: docker build -f apps/api/Dockerfile.migrate -t migrate:ci .
+      - run: docker build -f apps/web/Dockerfile -t web:ci .
+      - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          {
+            version: '${{ env.TRIVY_VERSION }}',
+            image-ref: 'api:ci',
+            severity: 'HIGH,CRITICAL',
+            ignore-unfixed: true,
+            exit-code: '1',
+          }
+      - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          {
+            version: '${{ env.TRIVY_VERSION }}',
+            image-ref: 'web:ci',
+            severity: 'HIGH,CRITICAL',
+            ignore-unfixed: true,
+            exit-code: '1',
+          }
+      - uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          {
+            version: '${{ env.TRIVY_VERSION }}',
+            image-ref: 'migrate:ci',
+            severity: 'HIGH,CRITICAL',
+            ignore-unfixed: true,
+            exit-code: '1',
+          }
+      - run: |
+          for image in api:ci web:ci migrate:ci; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock goodwithtech/dockle:${DOCKLE_VERSION} --exit-code 1 --exit-level warn "$image"
+          done

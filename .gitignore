@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.secrets/
+.tools/
+node_modules/
+dist/
+coverage/
+coverage.out
+.scannerwork/
+.artifacts/
+playwright-report/
+test-results/
+*.exe

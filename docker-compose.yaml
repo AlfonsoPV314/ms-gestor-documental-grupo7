@@ -1,0 +1,86 @@
+name: ms-gestor-documental
+services:
+  postgres:
+    image: postgres:17.11@sha256:ff87138949ad9a46f32ff23bd6852b52ce024a13dffe9b4087be98292cdd3b4f
+    environment:
+      POSTGRES_USER: documental
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Ejecutar scripts/iniciar.ps1}
+      POSTGRES_DB: documental
+      TZ: America/Santiago
+    ports: ['127.0.0.1:5173:5432']
+    volumes: ['documental-db:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U documental -d documental']
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  migrate:
+    image: ms-gestor-documental-migrate:local
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile.migrate
+    environment:
+      DATABASE_URL: postgres://documental:${POSTGRES_PASSWORD}@postgres:5432/documental?sslmode=disable
+    depends_on:
+      postgres: { condition: service_healthy }
+  identidad:
+    image: ms-gestor-documental-identidad:local
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      args: { COMMAND: identidad-dev }
+    environment:
+      API_ENV: dev
+      AUTH_ISSUER: http://identidad:8080
+      FRONTEND_URL: http://localhost:5170
+    ports: ['127.0.0.1:5172:8080']
+    healthcheck:
+      test: ['CMD', '/app/servicio', 'healthcheck']
+      disable: true
+  backend:
+    image: ms-gestor-documental-backend:local
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      API_PORT: '8080'
+      API_ENV: ${API_ENV:-dev}
+      API_MOCKS: ${API_MOCKS:-false}
+      DATABASE_URL: postgres://documental:${POSTGRES_PASSWORD}@postgres:5432/documental?sslmode=disable
+      AUTH_JWKS_URL: ${AUTH_JWKS_URL:-http://identidad:8080/jwks}
+      AUTH_ISSUER: ${AUTH_ISSUER:-http://identidad:8080}
+      AUTH_AUDIENCE: ${AUTH_AUDIENCE:-documental}
+      AUTH_COOKIE_NAME: ${AUTH_COOKIE_NAME:-sesion}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5170}
+      SIGNING_KEY_FILE: /run/keys/firma.key
+      TZ: America/Santiago
+    volumes: ['./.secrets:/run/keys:ro']
+    ports: ['127.0.0.1:5171:8080']
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      identidad: { condition: service_started }
+    healthcheck:
+      test: ['CMD', '/app/servicio', 'healthcheck']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    read_only: true
+    tmpfs: ['/tmp:size=64m,mode=1777']
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+  frontend:
+    image: ms-gestor-documental-frontend:local
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      BACKEND_URL: http://backend:8080
+      IDENTIDAD_URL: http://identidad:8080
+    ports: ['127.0.0.1:5170:8080']
+    depends_on:
+      backend: { condition: service_healthy }
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+volumes:
+  documental-db:

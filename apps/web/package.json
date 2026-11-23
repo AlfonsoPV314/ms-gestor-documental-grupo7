@@ -1,0 +1,56 @@
+{
+  "name": "@pingeso-civil/ms-gestor-documental-ui",
+  "version": "1.0.0",
+  "type": "module",
+  "files": [
+    "dist/documental.js",
+    "dist/documental.css",
+    "dist/index.d.ts",
+    "dist/contrato.d.ts",
+    "dist/componentes"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/documental.js"
+    },
+    "./style.css": "./dist/documental.css"
+  },
+  "peerDependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5170",
+    "build": "tsc --noEmit && vite build && vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json && node ../../scripts/tipos-ui.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "openapi-fetch": "catalog:"
+  },
+  "devDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "tailwindcss": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "openapi-typescript": "catalog:",
+    "msw": "catalog:",
+    "vitest": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@playwright/test": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/node": "catalog:",
+    "@testing-library/react": "catalog:",
+    "jsdom": "catalog:"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "contratoApi": "1.0.0"
+}

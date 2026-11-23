@@ -1,0 +1,9 @@
+.git
+.env*
+.secrets
+.tools
+.artifacts
+**/node_modules
+**/dist
+**/coverage
+**/coverage.out
