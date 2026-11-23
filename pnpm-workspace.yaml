@@ -1,6 +1,7 @@
 packages:
   - apps/web
 catalog:
+  swagger-ui-dist: 5.36.0
   react: 19.2.8
   react-dom: 19.2.8
   typescript: 6.0.3

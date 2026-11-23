@@ -15,11 +15,14 @@ pnpm exec lefthook install
 ```
 
 - Aplicación: <http://localhost:5170>
-- API y documentación: <http://localhost:5171/api/docs>
+- Swagger UI: <http://localhost:5170/api/docs>
+- API directa: <http://localhost:5171>
 - OpenAPI servido: <http://localhost:5171/api/openapi.yaml>
 - Salud: <http://localhost:5171/healthz> y <http://localhost:5171/readyz>
 
 Seleccionar una identidad de prueba y cargar un archivo. `operador` carga y consulta; `lector` consulta los documentos del mismo propietario; `ajeno` tiene otra identidad y no puede verlos. La app de desarrollo no se publica como producto.
+
+Huma genera el contrato OpenAPI y Swagger UI lo presenta para explorar y ejecutar los endpoints. Abrir Swagger desde el puerto 5170 permite usar la sesión iniciada en la aplicación. También está disponible en el puerto 5171, donde se puede proporcionar un JWT con `Authorize`. Sus recursos se sirven localmente, sin CDN; la documentación está deshabilitada en producción.
 
 `iniciar.ps1` genera `.env` y `.secrets/firma.key` solo si faltan. Son privados y se ignoran en Git. Conservar la clave y la base juntas: la firma de documentos anteriores depende de esa clave. `docker compose stop` conserva datos. No usar `down -v` para detener el trabajo cotidiano.
 

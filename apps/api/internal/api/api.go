@@ -63,7 +63,7 @@ func traducir(err error) error {
 }
 func Nueva(mux *http.ServeMux, s *service.Servicio, ambiente string, mocks bool, auth func(huma.API)) huma.API {
 	cfg := huma.DefaultConfig("MS Gestor Documental — Grupo 7", "1.0.0")
-	cfg.DocsPath = "/api/docs"
+	cfg.DocsPath = ""
 	cfg.OpenAPIPath = "/api/openapi"
 	cfg.SchemasPath = "/api/schemas"
 	if ambiente == "prod" {
@@ -73,6 +73,9 @@ func Nueva(mux *http.ServeMux, s *service.Servicio, ambiente string, mocks bool,
 	}
 	cfg.Components.SecuritySchemes = map[string]*huma.SecurityScheme{"sesion": {Type: "apiKey", In: "cookie", Name: "sesion"}, "bearer": {Type: "http", Scheme: "bearer", BearerFormat: "JWT"}}
 	a := humago.New(mux, cfg)
+	if ambiente != "prod" {
+		registrarSwagger(mux)
+	}
 	if auth != nil {
 		auth(a)
 	}
