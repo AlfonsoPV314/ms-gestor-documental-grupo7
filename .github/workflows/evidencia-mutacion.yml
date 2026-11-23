@@ -23,4 +23,9 @@ jobs:
         run: node scripts/mutacion.mjs --evidencia-roja
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
-        with: { name: evidencia-roja, path: .artifacts/mutacion.log }
+        with:
+          {
+            name: evidencia-roja,
+            path: .artifacts/mutacion.log,
+            include-hidden-files: true,
+          }

@@ -63,6 +63,7 @@ jobs:
         if: always()
         with:
           name: evidencia-pruebas
+          include-hidden-files: true
           path: |
             .artifacts/mutacion.log
             apps/api/coverage.out
