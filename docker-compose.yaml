@@ -36,7 +36,9 @@ services:
     ports: ['127.0.0.1:5172:8080']
     healthcheck:
       test: ['CMD', '/app/servicio', 'healthcheck']
-      disable: true
+      interval: 5s
+      timeout: 3s
+      retries: 30
   backend:
     image: ms-gestor-documental-backend:local
     build:
@@ -58,7 +60,7 @@ services:
     ports: ['127.0.0.1:5171:8080']
     depends_on:
       migrate: { condition: service_completed_successfully }
-      identidad: { condition: service_started }
+      identidad: { condition: service_healthy }
     healthcheck:
       test: ['CMD', '/app/servicio', 'healthcheck']
       interval: 5s
