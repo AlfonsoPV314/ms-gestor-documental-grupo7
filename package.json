@@ -11,7 +11,7 @@
     "build": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui build",
     "typecheck": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui typecheck",
     "test": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui test",
-    "test:api": "node scripts/go.mjs test ./...",
+    "test:api": "node scripts/go.mjs test ./cmd/... ./internal/...",
     "test:e2e:api": "node scripts/e2e.mjs",
     "test:mutacion": "node scripts/mutacion.mjs",
     "test:e2e:web": "pnpm --filter @pingeso-civil/ms-gestor-documental-ui test:e2e",
