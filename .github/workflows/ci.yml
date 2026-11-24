@@ -55,8 +55,13 @@ jobs:
           mkdir -p .secrets
           export SIGNING_KEY_FILE="$PWD/.secrets/firma.key"
           node scripts/go.mjs run ./cmd/claves
+          sudo chgrp 65532 "$SIGNING_KEY_FILE"
+          chmod 0640 "$SIGNING_KEY_FILE"
           export POSTGRES_PASSWORD="$(openssl rand -hex 24)"
-          docker compose up -d --build --wait
+          if ! docker compose up -d --build --wait; then
+            docker compose logs --no-color --tail 50 backend migrate
+            exit 1
+          fi
           pnpm --filter @pingeso-civil/ms-gestor-documental-ui exec playwright install --with-deps chromium
           pnpm test:e2e:web
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -88,7 +93,10 @@ jobs:
         with: { go-version-file: apps/api/go.mod }
       - run: pnpm install --frozen-lockfile && pnpm audit --audit-level high
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-        env: { GITLEAKS_VERSION: 8.30.1 }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_ENABLE_COMMENTS: 'false'
       - run: cd apps/api && go run golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION} ./...
       - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
         with: { recursive: true, failure-threshold: error }
