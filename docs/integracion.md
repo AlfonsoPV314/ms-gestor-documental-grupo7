@@ -1,25 +1,44 @@
 # Integración entre grupos
 
-## Grupo 6: proveedor de identidad pendiente
+## Grupo 6: contrato recibido, permisos y sesión final pendientes
 
-El contrato real no fue entregado. No se ha inventado ni publicado un contrato externo atribuido al grupo 6. `identidad-dev` es un fixture explícito para local y pruebas; su código no forma parte de la imagen API ni del paquete UI.
+El contrato real está copiado en `contracts/externos/identidad.yaml`, desde el
+repositorio <https://github.com/PINGESO-CIVIL/usuarios-roles>, commit
+`2d5ecccfd0fd27415ffbd4d6dd017ed895d94fd1`. `identidad-dev` sigue siendo un
+fixture explícito de desarrollo; no se atribuye al grupo 6.
 
-Solicitar al grupo 6: contrato OpenAPI, URL interna, JWKS, issuer, audience, nombre de cookie, algoritmos, claims de permisos y tokens de prueba. Copiar su contrato a `contracts/externos/identidad.yaml`, generar cliente Go mediante oapi-codegen v2.8.2 si sus operaciones son necesarias y revisar la adaptación de claims antes de entregar Hito 2. Validar JWKS no equivale a necesitar una llamada de introspección por cada request.
+Su implementación usa RS256, JWKS en `/.well-known/jwks.json`, issuer
+`pingeso-identidad`, audience `pingeso`, cookie `sesion` y permisos firmados.
+La API documental ya soporta esos valores mediante configuración. La prueba de
+[demo](demo.md) usa su código real; no consulta su base ni necesita introspección
+por request. No se genera un cliente CRUD de usuarios porque no consumimos esas
+operaciones: keyfunc implementa el cliente JWKS con timeout de cinco segundos.
 
-Contrato provisional esperado del JWT:
+Claims relevantes del JWT recibido:
 
 ```json
 {
   "sub": "UUID del usuario",
-  "iss": "emisor acordado",
-  "aud": "documental",
+  "iss": "pingeso-identidad",
+  "aud": ["pingeso"],
   "exp": 1796000000,
   "permisos": ["documentos:leer", "documentos:operar"],
-  "rol": "operador"
+  "roles": ["operador"]
 }
 ```
 
-La autorización se decide por permisos firmados, no por el rol enviado desde la interfaz. El campo rol se conserva como contexto provisional. La matriz probada está en acceso_test.go y los endpoints se prueban además en E2E. La sesión usa cookie HttpOnly, Secure y SameSite=Lax; no se guarda en almacenamiento web. Clientes de API pueden usar Bearer JWT.
+La autorización se decide por permisos firmados, no por roles enviados desde la
+interfaz. El arreglo `roles` no se usa para conceder acceso. La matriz está en
+acceso_test.go y los endpoints se prueban además en E2E. La sesión usa cookie
+HttpOnly, Secure y SameSite=Lax; no se guarda en almacenamiento web. Clientes de
+API pueden usar Bearer JWT.
+
+Pendiente: acordar qué roles reales reciben `documentos:leer` y
+`documentos:operar`, las URLs del despliegue y la sesión del host cliente. Los
+roles seed del grupo 6 no tienen permisos documentales; `permisos_extra` y el
+almacenamiento en memoria de esa versión son herramientas de desarrollo, no
+evidencia de cierre productivo de Hito 2. El selector de identidad de la app
+local sigue siendo el fixture; no se presenta como un login real del grupo 6.
 
 ## Grupo 5: consumidor
 

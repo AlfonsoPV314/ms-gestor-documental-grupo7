@@ -5,6 +5,7 @@ apps/web/src/contrato.d.ts
 apps/web/dist
 apps/web/coverage
 contracts/openapi.yaml
+contracts/externos/*.yaml
 .artifacts
 .secrets
 .tools
