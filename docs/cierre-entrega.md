@@ -1,8 +1,8 @@
 # Cierre de entrega — Grupo 7
 
 Estado revisado el 27 de noviembre de 2026. El correo más reciente del curso
-trata el 4 de diciembre como fecha de referencia. Mantener el nombre actual del
-repositorio, según respuesta del ayudante. No confundir validación local, run
+trata el 4 de diciembre como fecha de referencia. Repositorio público transferido
+a `PINGESO-CIVIL/gestor-documental`. No confundir validación local, run
 remoto aprobado y entrega oficial.
 
 ## Trabajo preparado
@@ -28,12 +28,12 @@ remoto aprobado y entrega oficial.
       No omitir SonarQube ni bajar umbrales para convertirlo en verde.
 - [ ] Escanear el historial completo con Gitleaks y revisar datos confidenciales
       del cliente antes de transferir/publicar. El escaneo no sustituye esa revisión.
-- [ ] El propietario acepta la invitación y transfiere el repositorio público
-      de `AlfonsoPV314` a `PINGESO-CIVIL`. La cuenta usada para preparar este trabajo
-      tiene push, pero no administración; no puede realizar la transferencia.
-- [ ] Actualizar el remoto y enlaces tras verificar la nueva URL real.
-- [ ] Confirmar con los ayudantes protección de main y tags; mantener el nombre
-      del repositorio actual. No crear el tag sobre un PR sin fusionar.
+- [x] Repositorio público transferido a `PINGESO-CIVIL/gestor-documental`, verificado
+      mediante la API de GitHub. El PR #15 se conservó abierto.
+- [x] Remoto local actualizado a `https://github.com/PINGESO-CIVIL/gestor-documental.git`.
+- [ ] Cada integrante actualiza su propio remoto a la URL nueva.
+- [ ] Confirmar con los ayudantes protección de main y tags. No crear el tag
+      sobre un PR sin fusionar.
 
 ## Hito 1
 

@@ -20,11 +20,12 @@ Sobre el commit final de main: tag hito-2, release, OpenAPI y SBOM CycloneDX adj
 
 ## Publicación
 
-El repositorio público existe en `AlfonsoPV314/ms-gestor-documental-grupo7`.
-Su propietario debe aceptar la invitación, revisar el historial con Gitleaks y
-transferirlo a PINGESO-CIVIL. Mantener el nombre actual según el ayudante y
-actualizar origin tras verificar la URL nueva. Los ayudantes configuran la
-protección de main y tags; verificar PR obligatorio, aprobación y checks verdes.
+El repositorio público ya está en `PINGESO-CIVIL/gestor-documental` y el remoto
+local fue actualizado. Los demás integrantes deben ejecutar
+`git remote set-url origin https://github.com/PINGESO-CIVIL/gestor-documental.git`.
+Los ayudantes configuran la protección de main y tags; verificar PR obligatorio,
+aprobación y checks verdes. El historial se escaneó con Gitleaks sin hallazgos en
+la validación del commit `eac48e0`; repetir el control para el commit de entrega.
 
 SONAR_TOKEN y SONAR_HOST_URL van directamente en Secrets del repositorio. El runner de GitHub no puede acceder a localhost de este PC. SonarQube Community local no proporciona análisis nativo de PR/ramas: la instancia del curso debe soportar la modalidad requerida antes de considerar CI completo. No se omite el scan cuando faltan secrets.
 
