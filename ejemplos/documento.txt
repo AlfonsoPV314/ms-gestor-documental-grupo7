@@ -1,0 +1,3 @@
+Grupo 7 — Gestor Documental
+Documento ficticio para demostrar carga, descarga y verificación de integridad.
+No contiene datos de clientes ni información confidencial.

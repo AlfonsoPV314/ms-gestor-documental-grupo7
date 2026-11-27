@@ -1,6 +1,8 @@
-# Entrega del 4 de diciembre de 2026
+# Preparación de entrega — referencia 4 de diciembre de 2026
 
-Ambos hitos se entregan en el repositorio público de PINGESO-CIVIL. El código local no equivale a entrega aprobada. La hora límite no está especificada en los adjuntos.
+Ambos hitos se entregan en el repositorio público de PINGESO-CIVIL. El correo
+reciente del curso aclara que el 4 de diciembre es una fecha de referencia.
+Ver [checklist actual de cierre](cierre-entrega.md) y [guía de demo](demo.md).
 
 ## Hito 1
 
@@ -18,7 +20,12 @@ Sobre el commit final de main: tag hito-2, release, OpenAPI y SBOM CycloneDX adj
 
 ## Publicación
 
-Cuando exista el repositorio: aceptar invitaciones, escanear todo el historial con Gitleaks, transferir/publicar según las instrucciones del curso y actualizar origin. Los ayudantes configuran protección de main y tags; el grupo verifica PR obligatorio, aprobación y checks calidad, seguridad e imagen.
+El repositorio público ya está en `PINGESO-CIVIL/gestor-documental` y el remoto
+local fue actualizado. Los demás integrantes deben ejecutar
+`git remote set-url origin https://github.com/PINGESO-CIVIL/gestor-documental.git`.
+Los ayudantes configuran la protección de main y tags; verificar PR obligatorio,
+aprobación y checks verdes. El historial se escaneó con Gitleaks sin hallazgos en
+la validación del commit `eac48e0`; repetir el control para el commit de entrega.
 
 SONAR_TOKEN y SONAR_HOST_URL van directamente en Secrets del repositorio. El runner de GitHub no puede acceder a localhost de este PC. SonarQube Community local no proporciona análisis nativo de PR/ramas: la instancia del curso debe soportar la modalidad requerida antes de considerar CI completo. No se omite el scan cuando faltan secrets.
 

@@ -13,6 +13,18 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
+		cliente := &http.Client{Timeout: 2 * time.Second}
+		respuesta, err := cliente.Get("http://127.0.0.1:8080/jwks")
+		if err != nil {
+			os.Exit(1)
+		}
+		_ = respuesta.Body.Close()
+		if respuesta.StatusCode != http.StatusOK {
+			os.Exit(1)
+		}
+		return
+	}
 	if os.Getenv("API_ENV") != "dev" && os.Getenv("API_ENV") != "test" {
 		panic("identidad-dev solo dev/test")
 	}

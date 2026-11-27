@@ -63,6 +63,17 @@ Contrato generado y versionado en `contracts/openapi.yaml`; tipos en `apps/web/s
 
 ## Estado de publicación
 
-Trabajo local. El repositorio remoto, las invitaciones de PINGESO-CIVIL, la protección de main, SonarQube accesible desde CI, la integración real del grupo 6 y las releases oficiales requieren los datos y accesos del curso. No se han creado tags hito-* ni se presenta un pipeline remoto como aprobado.
+Repositorio público transferido a <https://github.com/PINGESO-CIVIL/gestor-documental>.
+La verificación de las protecciones de main, SonarQube accesible desde CI,
+la asignación real de permisos de identidad y las releases oficiales siguen
+pendientes. No se han creado tags hito-* ni se presenta un pipeline remoto como
+aprobado.
+
+Pipeline: <https://github.com/PINGESO-CIVIL/gestor-documental/actions>.
+Correcciones y evidencias: <https://github.com/PINGESO-CIVIL/gestor-documental/pull/15>.
+
+Ver la [guía de demo con ejemplos](docs/demo.md), el
+[contrato real de identidad](contracts/externos/README.md) y la
+[checklist de cierre y evidencias](docs/cierre-entrega.md).
 
 Las correcciones mínimas de seguridad respecto de las versiones originales del DAS están registradas en [actualizaciones de seguridad](docs/actualizaciones-seguridad.md) para revisión del curso.

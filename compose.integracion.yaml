@@ -1,0 +1,40 @@
+# Requiere el commit documentado del grupo 6 en .artifacts/usuarios-roles.
+services:
+  identidad-grupo6-db:
+    image: postgres:17.11@sha256:ff87138949ad9a46f32ff23bd6852b52ce024a13dffe9b4087be98292cdd3b4f
+    environment:
+      POSTGRES_USER: identidad
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Ejecutar scripts/iniciar.ps1}
+      POSTGRES_DB: identidad
+    volumes: ['identidad-grupo6-db:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U identidad -d identidad']
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  identidad-grupo6:
+    image: documental-identidad-grupo6:prueba
+    build:
+      context: .artifacts/usuarios-roles
+      dockerfile: apps/api/Dockerfile
+    environment:
+      API_PORT: '8080'
+      API_ENV: dev
+      DATABASE_URL: postgres://identidad:${POSTGRES_PASSWORD}@identidad-grupo6-db:5432/identidad?sslmode=disable
+      FRONTEND_URL: http://localhost:5170
+      TZ: America/Santiago
+      JWT_EMISOR: pingeso-identidad
+      JWT_AUDIENCIA: pingeso
+      JWT_TTL: 15m
+    ports: ['127.0.0.1:5161:8080']
+    depends_on:
+      identidad-grupo6-db: { condition: service_healthy }
+  backend:
+    environment:
+      API_MOCKS: 'false'
+      AUTH_JWKS_URL: http://identidad-grupo6:8080/.well-known/jwks.json
+      AUTH_ISSUER: pingeso-identidad
+      AUTH_AUDIENCE: pingeso
+      AUTH_COOKIE_NAME: sesion
+volumes:
+  identidad-grupo6-db:
